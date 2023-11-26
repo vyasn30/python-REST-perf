@@ -1,17 +1,29 @@
-import uuid
-import time
 import asyncio
 
 class DataBaseRepository:
     def __init__(self,):
-        self.data_store = dict()
+        self.data_store = {}
         self.hits=0
 
-    async def add_user(self, username: str):
+    async def add_user(self, username: str, userid: str):
         await asyncio.sleep(0.008)
         self.hits+=1
-        id = str(uuid.uuid4())
         print(f"DB hit {self.hits}")
-        self.data_store[id] = username
+        self.data_store[userid] = username
 
-        return {"id": id, "username":username}
+        return {"id": userid, "username":username}
+
+    def get_all_users(self):
+        return self.data_store
+
+    async def get_user_by_id(self, userid):
+        await asyncio.sleep(0.008)
+        print(f"DB hit {self.hits}")
+        self.hits+=1
+        try:
+            return {
+            "user_id": userid,
+            "user_name": self.data_store[userid]
+        }
+        except Exception as e:
+            return None

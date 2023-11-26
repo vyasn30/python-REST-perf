@@ -10,13 +10,15 @@ def test_root():
     assert response.status_code == 200
     assert response.json() == {"message": "Hello Mf"}
 
-async def async_test_users():
+async def async_test_create_users(n_users: int):
+    # Normal test client doesn't work for async tests. Use httpx's AsyncClient() 
     async with httpx.AsyncClient() as async_client:
         tasks = []
 
-        for i in range(1000):
+        for i in range(n_users):
             user_name = f"user_{i}"
             payload = {
+                "user_id": str(i),
                 "user_name": user_name
             }
             url = "http://localhost:8000/user/"
@@ -25,11 +27,23 @@ async def async_test_users():
         responses = await asyncio.gather(*tasks)
 
         for response in responses:
-            print("lodda")
+            assert response.status_code == 200
+
+async def async_test_get_users(n_req:int):
+    async with httpx.AsyncClient() as async_client:
+
+        tasks = []
+
+        for i in range(n_req):
+            userid = str(i%100)
+            url =f"http://localhost:8000/user/?userid={userid}"
+            tasks.append(async_client.get(url))
+
+        responses = await asyncio.gather(*tasks)
+        for response in responses:
             print(response.json())
             assert response.status_code == 200
 
-asyncio.run(async_test_users())
 
-if __name__ == "__main__":
-    test_users()
+asyncio.run(async_test_create_users(100))
+asyncio.run(async_test_get_users(1000))
