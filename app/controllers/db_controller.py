@@ -1,8 +1,11 @@
 from app.database_repository import DataBaseRepository
 from app.models.user import User
+from app.caching.caching_service import CacheService
 import asyncio
 
 db = DataBaseRepository()
+cache = CacheService(db) 
+
 class DataBaseController:
     def __init__(self):
         pass
@@ -18,10 +21,17 @@ class DataBaseController:
         return db.data_store
 
     
-    async def get_user_by_id(self, userid:str):
-        user = await db.get_user_by_id(userid)
-
-        if user:
-            return user
+    async def get_user_by_id(self, userid:str, user_cache:bool=True):
+        user = None
+        if user_cache:
+            user = await cache.get_user_by_id(userid)
         else:
-            return None
+            user = await db.get_user_by_id(userid)
+        return user
+
+        # Hillarious: I can't believe I coded this
+
+        # if user:
+        #     return user
+        # else:
+        #     return None

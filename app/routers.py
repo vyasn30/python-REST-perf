@@ -19,8 +19,13 @@ async def get_all_users():
 
 @router.get("/user/")
 async def get_user(userid):
-    user = await asyncio.gather(controller.get_user_by_id(userid))
+    user = await asyncio.gather(controller.get_user_by_id(userid, user_cache=False))
     if user:
         return user
     else:
         return JSONResponse(content={"message": "User not found"}, status_code=404)
+
+
+@router.get("/user/cached")
+async def get_user_from_cache(userid):
+    user = await asyncio.gather(controller.get_user_by_id(userid, user_cache=True))

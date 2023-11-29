@@ -6,9 +6,8 @@ class DataBaseRepository:
         self.hits=0
 
     async def add_user(self, username: str, userid: str):
-        await asyncio.sleep(0.008)
+        await asyncio.sleep(0.08)
         self.hits+=1
-        print(f"DB hit {self.hits}")
         self.data_store[userid] = username
 
         return {"id": userid, "username":username}
@@ -17,8 +16,7 @@ class DataBaseRepository:
         return self.data_store
 
     async def get_user_by_id(self, userid):
-        await asyncio.sleep(0.008)
-        print(f"DB hit {self.hits}")
+        await asyncio.sleep(0.08)
         self.hits+=1
         try:
             return {
